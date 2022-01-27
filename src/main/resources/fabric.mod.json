@@ -1,25 +1,31 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "ender_christmas",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Ender Christmas",
+  "description": "Christmas ender chest texture.",
   "authors": [
-    "Tropheus Jay"
+    "Tropheus Jay",
+    {
+      "name": "ZenithKnight",
+      "contact": {
+        "homepage": "https://github.com/ZenithRogue"
+      }
+    }
   ],
   "contact": {
-    "sources": "https://github.com/TropheusJ/fabric-example-mod"
+    "sources": "https://github.com/TropheusJ/Ender-Christmas"
   },
   "license": "MIT",
-  "icon": "assets/modid/icon.png",
-  "environment": "*",
+  "icon": "assets/ender_christmas/icon.png",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "io.github.tropheusj.modid.ExampleMod"
+    "client": [
+      "io.github.tropheusj.ender_christmas.EnderChristmas"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "ender_christmas.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.12.12",

@@ -1,11 +1,10 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.tropheusj.modid.mixin",
+  "package": "io.github.tropheusj.ender_christmas.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-  ],
   "client": [
+    "SheetsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

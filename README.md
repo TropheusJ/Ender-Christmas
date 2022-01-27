@@ -1,10 +1,8 @@
-# Fabric Example Mod
+# Ender Christmas
+Christmas texture for the ender chest, correcting a wrongdoing done
+by Mojang in 22w03a. Should work in any version 1.18.1 or newer.
 
-## Setup
+![Image](src/main/resources/assets/ender_christmas/icon.png)
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the
-IDE that you are using.
-
-## License
-
-This template is available under the MIT license. Feel free to learn from it and incorporate it in your own projects.
+## Credit
+Texture provided by [ZenithKnight](https://github.com/ZenithRogue)
