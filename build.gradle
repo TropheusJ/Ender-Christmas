@@ -1,0 +1,105 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyAccessibility
+plugins {
+	id "fabric-loom" version "0.10-SNAPSHOT"
+	id "io.github.juuxel.loom-quiltflower-mini" version "1.+"
+	id "org.quiltmc.quilt-mappings-on-loom" version "3.1.1"
+	id "org.ajoberstar.grgit" version "4.1.1"
+	id "maven-publish"
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+if (grgit != null) {
+	version += "+${grgit.getBranch().current().name}.${grgit.head().abbreviatedId}"
+} else {
+	version += "+custom_unknown"
+}
+
+repositories {
+	maven { url = "https://api.modrinth.com/maven" }
+	maven { url = "https://maven.bai.lol" }
+	maven { url = "https://maven.terraformersmc.com/releases/" }
+	maven { url = "https://maven.parchmentmc.org" }
+}
+
+dependencies {
+	// dev environment
+	minecraft("com.mojang:minecraft:${project.minecraft_version}")
+	mappings loom.layered {
+		it.addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:1.18.1+build.5:v2")) // https://maven.quiltmc.org/#browse/browse:release
+		it.parchment("org.parchmentmc.data:parchment-1.18.1:BLEEDING-20211212.174449-1@zip") // https://ldtteam.jfrog.io/ui/native/parchmentmc-public/org/parchmentmc/data/parchment-1.18.1/BLEEDING-SNAPSHOT
+		it.officialMojangMappings {
+			setNameSyntheticMembers(false)
+		}
+	}
+	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
+	modRuntimeOnly("maven.modrinth:lazydfu:0.1.2")
+	modRuntimeOnly("maven.modrinth:suggestionproviderfabric:1.0.0")
+	modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
+	modRuntimeOnly("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
+    runtimeOnly("org.joml:joml:1.10.2")
+	modRuntimeOnly("maven.modrinth:lithium:${project.lithium_version}")
+	modRuntimeOnly("maven.modrinth:phosphor:${project.phosphor_version}")
+	modRuntimeOnly("maven.modrinth:iris:${project.iris_version}")
+	modRuntimeOnly("com.terraformersmc:modmenu:${project.modmenu_version}") { exclude group: "net.fabricmc"; exclude group: "net.fabricmc.fabric-api" }
+
+	// dependencies
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+task buildOrPublish {
+	group = "build"
+	String mavenUser = System.getenv().MAVEN_USER
+	if (mavenUser != null && !mavenUser.isEmpty()) {
+		dependsOn(tasks.getByName("publish"))
+		println "prepared for publish"
+	} else {
+		dependsOn(tasks.getByName("build"))
+		println "prepared for build"
+	}
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach { it.options.release = 17 }
+
+java {
+	withSourcesJar()
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}" }
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+		maven {
+			url = "https://maven.devos.community/${System.getenv().PUBLISH_SUFFIX}/"
+			credentials {
+				username = System.getenv().MAVEN_USER
+				password = System.getenv().MAVEN_PASS
+			}
+			authentication { basic(BasicAuthentication) }
+		}
+	}
+}
